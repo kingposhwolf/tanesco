@@ -20,4 +20,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //meter number validation
-Route::post('/meter', [MeterValidateApi::class ,'getValidMeter']); //tanesco api
+Route::middleware(['throttle:5,1'])->group(function () {
+    // This route allows up to 5 requests per minute (adjust as needed).
+    Route::post('/meter', [MeterValidateApi::class, 'getValidMeter']);
+});
+
+
+
+
+
+//Route::post('/meter', [MeterValidateApi::class ,'getValidMeter']); //tanesco api

@@ -29,6 +29,10 @@ class MeterValidateApi extends Controller
             // Retrieve the meter number from the request payload
             $meter_num = $request->input('meter_num');
 
+             // Generate the requestId
+            $requestId = generateRequestId();
+
+
             // Checking if the meter exists in the database.
             $meterExists = $this->meterDao->getMeterById($meter_num);
 
@@ -43,16 +47,26 @@ class MeterValidateApi extends Controller
                     $meterExists->getMeterNumber(),
                     $meterExists->getDebtAmount(),
                     $meterExists->getMeterStatus(),
-                    $customer->getCustomerName()
+                    $customer->getCustomerName(),
+                    $requestId
                 );
 
                 // Now setting the provider categories array attributes.
                 $validMeterDto->setAttributes($validMeterArray);
 
+                Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
+
+
                 return response()->json(["error" => false, "Meter Information" => $validMeterDto->getAttributes()], Response::HTTP_OK);
+
+
         }
+            Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is Failed to be  processed due to Invalid Meter Number');
 
             return response()->json(["error" => true, "message" => "Invalid Meter Number"], Response::HTTP_BAD_REQUEST);
+
+
+
         } catch (\Exception $exception) {
             Log::error("Exceptional Message: " . $exception->getMessage());
 
