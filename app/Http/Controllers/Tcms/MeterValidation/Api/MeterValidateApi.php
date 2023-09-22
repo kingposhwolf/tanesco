@@ -29,8 +29,8 @@ class MeterValidateApi extends Controller
             // Retrieve the meter number from the request payload
             $meter_num = $request->input('meter_num');
 
-             // Generate the requestId
-            $requestId = generateRequestId();
+             // Capture requestId
+            $requestId = $request->input('requestId');
 
 
             // Checking if the meter exists in the database.
@@ -63,7 +63,7 @@ class MeterValidateApi extends Controller
         }
             Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is Failed to be  processed due to Invalid Meter Number');
 
-            return response()->json(["error" => true, "message" => "Invalid Meter Number"], Response::HTTP_BAD_REQUEST);
+            return response()->json(["error" => true, "message" => "Invalid Meter Number"]);
 
 
 
